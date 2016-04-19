@@ -16,6 +16,7 @@ libraryDependencies ++= Seq(
   jdbc,
   cache,
   ws,
+  "org.flywaydb" %% "flyway-play" % "3.0.0",
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
 )
 
