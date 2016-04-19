@@ -1,0 +1,2 @@
+CREATE DATABASE "product";
+GRANT ALL PRIVILEGES ON DATABASE "product" TO root;
