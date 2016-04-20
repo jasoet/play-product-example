@@ -17,6 +17,7 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   "org.flywaydb" %% "flyway-play" % "3.0.0",
+  "org.postgresql" % "postgresql" % "9.4.1208",
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
 )
 
