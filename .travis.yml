@@ -1,0 +1,19 @@
+language: scala
+scala:
+   - 2.11.8
+script:
+   - ./bin/activator clean compile test
+before_script:
+  - psql -c 'create database product_test;' -U postgres
+services:
+  - postgresql
+addons:
+  postgresql: "9.4"
+env:
+- APPLICATION_SECRET=VERYVERYSECRETYEAH!!!
+- PLAY_PRODUCT_DB_URL=jdbc:postgresql://localhost:5432/product_test
+- PLAY_PRODUCT_DB_USERNAME=postgres
+- PLAY_PRODUCT_DB_PASSWORD=
+- PLAY_PRODUCT_DB_TEST_URL=jdbc:postgresql://localhost:5432/product_test
+- PLAY_PRODUCT_DB_TEST_USERNAME=postgres
+- PLAY_PRODUCT_DB_TEST_PASSWORD=
