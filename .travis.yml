@@ -5,8 +5,6 @@ jdk:
   - oraclejdk8
 before_script:
   - psql -c 'create database product_test;' -U postgres
-services:
-  - postgresql
 addons:
   postgresql: "9.4"
 cache:
