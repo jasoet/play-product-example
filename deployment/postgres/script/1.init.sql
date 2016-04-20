@@ -1,2 +1,4 @@
 CREATE DATABASE "product";
 GRANT ALL PRIVILEGES ON DATABASE "product" TO root;
+CREATE DATABASE "product-test";
+GRANT ALL PRIVILEGES ON DATABASE "product-test" TO root;
