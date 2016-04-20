@@ -1,6 +1,8 @@
 language: scala
 scala:
    - 2.11.8
+jdk:
+  - oraclejdk8
 before_script:
   - psql -c 'create database product_test;' -U postgres
 services:
