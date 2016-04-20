@@ -8,5 +8,5 @@ package domains
 
 case class Category(id: Int,
                     name: String,
-                    parentId: Int,
+                    parentId: Option[Int],
                     var children: List[Category])
