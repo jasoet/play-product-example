@@ -1,8 +1,6 @@
 language: scala
 scala:
    - 2.11.8
-script:
-   - ./bin/activator clean compile test
 before_script:
   - psql -c 'create database product_test;' -U postgres
 services:
