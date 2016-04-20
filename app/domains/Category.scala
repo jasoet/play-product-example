@@ -1,7 +1,13 @@
 package domains
 
 /**
-  * Documentation Here
+  * Case Class to Map categories Table
+  * Mapping [File -> Column]
+  * id -> id
+  * name -> name
+  * parentId -> parent_id
+  *
+  * Field children is transient, not mapped to Column
   *
   * @author Deny Prasetyo.
   */
@@ -9,4 +15,4 @@ package domains
 case class Category(id: Int,
                     name: String,
                     parentId: Option[Int],
-                    var children: List[Category])
+                    var children: List[Category] = List.empty)
