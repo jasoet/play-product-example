@@ -30,9 +30,9 @@ class ProductRepository {
     *
     * @param o          Product Object
     * @param connection implicit [[java.sql.Connection]]
-    * @return Some(Long) if Success, None if Failure
+    * @return Affected Row Count
     */
-  def insert(o: Product)(implicit connection: Connection): Option[Long] = {
+  def insert(o: Product)(implicit connection: Connection): Int = {
     SQL(
       """
          INSERT INTO products (code, name, description, color, size, picture_url, price, category_id) VALUES
@@ -46,7 +46,7 @@ class ProductRepository {
         'pictureUrl -> o.pictureUrl,
         'price -> o.price,
         'categoryId -> o.categoryId)
-      .executeInsert()
+      .executeUpdate()
   }
 
 
@@ -138,18 +138,16 @@ class ProductRepository {
   /**
     * Find all Products by Sizes.
     *
-    * @throws IllegalArgumentException if colors sizes is empty
     * @param connection implicit [[java.sql.Connection]]
     * @return List of Products
     */
-  def findBySize(sizes: List[String] = List.empty)(implicit connection: Connection): List[Product] = {
-    assume(sizes.nonEmpty, "Sizes parameter cannot be empty")
-    val uppercaseSized = sizes.map(_.toUpperCase)
+  def findBySize(size: String)(implicit connection: Connection): List[Product] = {
+    assume(size.nonEmpty, "Sizes parameter cannot be empty")
     SQL(
       s"""
-        SELECT code, name, description, color, size, picture_url, price, category_id FROM products WHERE size in ({sizes})
+        SELECT code, name, description, color, size, picture_url, price, category_id FROM products WHERE size = {sizes}
       """)
-      .on('sizes -> s"$uppercaseSized")
+      .on('sizes -> s"${size.toUpperCase}")
       .as(parser.*)
   }
 
