@@ -26,7 +26,7 @@ class CategoryRepository {
     *
     * @param o          Category Object
     * @param connection implicit [[java.sql.Connection]]
-    * @return True if Success, False otherwise
+    * @return Some(Long) if Success, None if Failure
     */
   def insert(o: Category)(implicit connection: Connection): Option[Long] = {
     SQL(
