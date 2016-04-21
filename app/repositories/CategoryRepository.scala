@@ -2,9 +2,10 @@ package repositories
 
 import java.sql.Connection
 import javax.inject.Singleton
+
 import anorm._
 import anorm.SqlParser._
-import domains.Category
+import domains.{Category, CategoryFlat}
 
 /**
   * Repository Class for [[domains.Category]]
@@ -156,5 +157,48 @@ class CategoryRepository {
       .on('name -> s"%$name%")
       .as(parser.*)
   }
+
+  /**
+    * List all Categories As [[CategoryFlat]].
+    * Product List Category from root (category with parent = null) to grand child (3 depth)
+    * Orphaned Category will not shown.
+    *
+    * @param connection implicit [[java.sql.Connection]]
+    * @return List of Category
+    */
+  def listAsFlat()(implicit connection: Connection): List[CategoryFlat] = {
+    val parser: RowParser[CategoryFlat] =
+      Macro.parser[CategoryFlat](
+        "root_id",
+        "root_name",
+        "child_id",
+        "child_name",
+        "grand_child_id",
+        "grand_child_name"
+      )
+
+    SQL(
+      """
+        SELECT
+          root.id  AS root_id,
+          root.name  AS root_name,
+          child.id AS child_id,
+          child.name AS child_name,
+          grand_child.id AS grand_child_id,
+          grand_child.name AS grand_child_name
+        FROM categories AS root
+          LEFT OUTER
+          JOIN categories AS child
+            ON child.parent_id = root.id
+          LEFT OUTER
+          JOIN categories AS grand_child
+            ON grand_child.parent_id = child.id
+        WHERE root.parent_id IS NULL
+        ORDER
+        BY root_name, child_name, grand_child_name
+      """)
+      .as(parser.*)
+  }
+
 
 }
