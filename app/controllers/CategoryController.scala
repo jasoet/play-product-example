@@ -18,8 +18,14 @@ import services.CategoryService
 @Singleton
 class CategoryController @Inject()(service: CategoryService) extends Controller {
 
-  def list() = Action {
-    service.findAll()
+  def list(name: String) = Action { request =>
+    val listCategory =
+      name.trim.isEmpty match {
+        case true => service.findAll()
+        case false => service.findByName(name)
+      }
+
+    listCategory
       .map { list => Ok(Json.toJson(list)) }
       .recover {
         case ex =>

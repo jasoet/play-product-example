@@ -18,8 +18,8 @@ import services.ProductService
 @Singleton
 class ProductController @Inject()(service: ProductService) extends Controller {
 
-  def list() = Action {
-    service.findAll()
+  def list(size: String, colors: String, from: Int, to: Int) = Action {
+    service.findByFiler(size, colors.split(",").toList, from, to)
       .map { list => Ok(Json.toJson(list)) }
       .recover {
         case ex =>
