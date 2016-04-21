@@ -3,9 +3,21 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
+GET           /                        controllers.HomeController.index
 # An example controller showing how to write asynchronous code
-GET     /message                    controllers.AsyncController.message
+GET           /message                 controllers.AsyncController.message
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET           /assets/*file            controllers.Assets.versioned(path="/public", file: Asset)
+
+GET           /products                controllers.ProductController.list
+GET           /products/:code          controllers.ProductController.get(code:String)
+POST          /products                controllers.ProductController.create
+PUT           /products/:code          controllers.ProductController.modify(code:String)
+DELETE        /products/:code          controllers.ProductController.delete(code:String)
+
+GET           /categories              controllers.CategoryController.list
+GET           /categories/:code        controllers.CategoryController.get(code:String)
+POST          /categories              controllers.CategoryController.create
+PUT           /categories/:code        controllers.CategoryController.modify(code:String)
+DELETE        /categories/:code        controllers.CategoryController.delete(code:String)
