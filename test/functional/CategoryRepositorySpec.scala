@@ -126,9 +126,9 @@ class CategoryRepositorySpec extends PlaySpec with OneAppPerTest with BeforeAndA
       findNone.isDefined shouldBe false
     }
 
-    "produce correct data when findChildren" in {
+    "produce correct data when findByParentId" in {
       val children = withTransaction { implicit c =>
-        repository.findChildren(1)
+        repository.findByParentId(1)
       }
 
       children.size should be(5)

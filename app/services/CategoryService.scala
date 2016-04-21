@@ -61,9 +61,9 @@ class CategoryService @Inject()(db: Database, repository: CategoryRepository) {
     }
   }
 
-  def findChildren(parentId: Int): Try[List[Category]] = Try {
+  def findByParentId(parentId: Int): Try[List[Category]] = Try {
     db.withTransaction { implicit c =>
-      repository.findChildren(parentId)
+      repository.findByParentId(parentId)
     }
   }
 }

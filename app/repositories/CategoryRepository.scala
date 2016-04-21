@@ -79,7 +79,6 @@ class CategoryRepository {
 
   /**
     * Find all Categories.
-    * Field children not populated here, must be populated by Services
     *
     * @param connection implicit [[java.sql.Connection]]
     * @return List of Category
@@ -99,7 +98,6 @@ class CategoryRepository {
 
   /**
     * Find a Category by Id.
-    * Field children not populated here, must be populated by Services
     *
     * @param connection implicit [[java.sql.Connection]]
     * @return List of Category
@@ -120,12 +118,11 @@ class CategoryRepository {
 
   /**
     * Find Category's Children by parentId.
-    * Field children not populated here, must be populated by Services
     *
     * @param connection implicit [[java.sql.Connection]]
     * @return List of Category
     */
-  def findChildren(parentId: Int)(implicit connection: Connection): List[Category] = {
+  def findByParentId(parentId: Int)(implicit connection: Connection): List[Category] = {
     val parser: RowParser[Category] =
       get[Int]("id") ~ get[String]("name") ~ get[Option[Int]]("parent_id") map {
         case id ~ name ~ parentIdx => Category(id, name, parentIdx)
@@ -142,7 +139,6 @@ class CategoryRepository {
   /**
     * Find all Categories by Name.
     * Use `like '%{name}%'` filter
-    * Field children not populated here, must be populated by Services
     *
     * @param connection implicit [[java.sql.Connection]]
     * @return List of Category
