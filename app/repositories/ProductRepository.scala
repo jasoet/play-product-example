@@ -11,6 +11,9 @@ import domains.Product
   * Only define single database operation and cannot hold transaction.
   * Transaction must be placed on services.
   *
+  * Don't Use this Class directly from Controller.
+  * Controller must use Services that already handle Transaction.
+  *
   * Every operation need implicit [[java.sql.Connection]].
   *
   * @author Deny Prasetyo.
