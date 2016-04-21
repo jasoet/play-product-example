@@ -3,5 +3,6 @@
 cd ..
 git pull up master
 ./bin/activator clean compile docker:stage
-cp -rvf target/docker/stage deployment/app
+rm -rvf deployment/app/opt deployment/app/Dockerfile
+cp -rvf target/docker/stage/* deployment/app/
 
