@@ -1,4 +1,4 @@
-CREATE TABLE product (
+CREATE TABLE products (
   code        VARCHAR(150) PRIMARY KEY   NOT NULL,
   name        VARCHAR(150) UNIQUE        NOT NULL,
   description VARCHAR(500)               NOT NULL,
