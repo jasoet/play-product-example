@@ -17,7 +17,7 @@ PUT           /products/:code          controllers.ProductController.modify(code
 DELETE        /products/:code          controllers.ProductController.delete(code:String)
 
 GET           /categories              controllers.CategoryController.list
-GET           /categories/:code        controllers.CategoryController.get(code:String)
+GET           /categories/:id        controllers.CategoryController.get(id:Int)
 POST          /categories              controllers.CategoryController.create
-PUT           /categories/:code        controllers.CategoryController.modify(code:String)
-DELETE        /categories/:code        controllers.CategoryController.delete(code:String)
+PUT           /categories/:id        controllers.CategoryController.modify(id:Int)
+DELETE        /categories/:id        controllers.CategoryController.delete(id:Int)
