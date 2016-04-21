@@ -80,5 +80,35 @@ class ProductService @Inject()(db: Database, repository: ProductRepository) {
     }
   }
 
-
+  def findByFiler(size: String = "",
+                  colors: List[String] = List.empty,
+                  from: Int = 0,
+                  to: Int = Int.MaxValue): Try[List[Product]] = {
+    if (colors.nonEmpty) {
+      findByColors(colors)
+        .map {
+          _.filter { p =>
+            if (size.trim.isEmpty) {
+              true
+            } else {
+              p.size.equalsIgnoreCase(size)
+            }
+          }
+            .filter { p =>
+              p.price >= from && p.price <= to
+            }
+        }
+    } else if (size.nonEmpty) {
+      findBySize(size)
+        .map {
+          _.filter { p =>
+            p.price >= from && p.price <= to
+          }
+        }
+    } else if (from != 0 && to != Int.MaxValue) {
+      findByPriceRange(from, to)
+    } else {
+      findAll()
+    }
+  }
 }

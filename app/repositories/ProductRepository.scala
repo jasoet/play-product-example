@@ -170,9 +170,9 @@ class ProductRepository {
 
     val sqlParams = colors.zipWithIndex
       .map {
-        case (c, i) => s"color LIKE {color$i}"
+        case (c, i) => s"color ILIKE {color$i}"
       }
-      .mkString(" or ")
+      .mkString(" OR ")
 
     val namedParameter = colors.zipWithIndex
       .map {
