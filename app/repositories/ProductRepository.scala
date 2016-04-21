@@ -19,9 +19,14 @@ import domains.Product
 @Singleton
 class ProductRepository {
 
+  private val parser: RowParser[Product] =
+    Macro.parser[Product](
+      "code", "name", "description", "color", "size", "picture_url", "price", "category_id"
+    )
+
   /**
     * Insert a new Product.
-    * There are no validations logic here such as to limit category tree depth.
+    * Size repesented by single letter Uppercase (XS,S,M,L,XL,XXL)
     *
     * @param o          Product Object
     * @param connection implicit [[java.sql.Connection]]
@@ -37,7 +42,7 @@ class ProductRepository {
         'name -> o.name,
         'description -> o.description,
         'color -> o.color,
-        'size -> o.size,
+        'size -> o.size.toUpperCase(),
         'pictureUrl -> o.pictureUrl,
         'price -> o.price,
         'categoryId -> o.categoryId)
@@ -92,11 +97,6 @@ class ProductRepository {
     * @return List of Product
     */
   def findAll()(implicit connection: Connection): List[Product] = {
-    val parser: RowParser[Product] =
-      Macro.parser[Product](
-        "code", "name", "description", "color", "size", "picture_url", "price", "category_id"
-      )
-
     SQL(
       """
         SELECT code, name, description, color, size, picture_url, price, category_id FROM products
@@ -111,11 +111,6 @@ class ProductRepository {
     * @return List of Product
     */
   def findOne(code: String)(implicit connection: Connection): Option[Product] = {
-    val parser: RowParser[Product] =
-      Macro.parser[Product](
-        "code", "name", "description", "color", "size", "picture_url", "price", "category_id"
-      )
-
     SQL(
       """
         SELECT code, name, description, color, size, picture_url, price, category_id FROM products WHERE code={code}
@@ -132,19 +127,78 @@ class ProductRepository {
     * @return List of Products
     */
   def findByName(name: String)(implicit connection: Connection): List[Product] = {
-    val parser: RowParser[Product] =
-      Macro.parser[Product](
-        "code", "name", "description", "color", "size", "picture_url", "price", "category_id"
-      )
-
     SQL(
       """
-        |SELECT code, name, description, color, size, picture_url, price, category_id FROM products WHERE name like {name}
+        SELECT code, name, description, color, size, picture_url, price, category_id FROM products WHERE name like {name}
       """)
       .on('name -> s"%$name%")
       .as(parser.*)
   }
 
+  /**
+    * Find all Products by Sizes.
+    *
+    * @throws IllegalArgumentException if colors sizes is empty
+    * @param connection implicit [[java.sql.Connection]]
+    * @return List of Products
+    */
+  def findBySize(sizes: List[String] = List.empty)(implicit connection: Connection): List[Product] = {
+    assume(sizes.nonEmpty, "Sizes parameter cannot be empty")
+    val uppercaseSized = sizes.map(_.toUpperCase)
+    SQL(
+      s"""
+        SELECT code, name, description, color, size, picture_url, price, category_id FROM products WHERE size in ({sizes})
+      """)
+      .on('sizes -> s"$uppercaseSized")
+      .as(parser.*)
+  }
+
+  /**
+    * Find all Products by Colors.
+    *
+    * @throws IllegalArgumentException if colors parameter is empty
+    * @param connection implicit [[java.sql.Connection]]
+    * @return List of Products
+    */
+  def findByColors(colors: List[String] = List.empty)(implicit connection: Connection): List[Product] = {
+    assume(colors.nonEmpty, "Colors parameter cannot be empty")
+    val sqlString: String =
+      """
+        SELECT code, name, description, color, size, picture_url, price, category_id FROM products WHERE
+      """
+
+    val sqlParams = colors.zipWithIndex
+      .map {
+        case (c, i) => s"color LIKE {color$i}"
+      }
+      .mkString(" or ")
+
+    val namedParameter = colors.zipWithIndex
+      .map {
+        case (c, i) => NamedParameter(s"color$i", s"%$c%")
+      }
+
+    SQL(s"$sqlString $sqlParams")
+      .on(namedParameter: _*)
+      .as(parser.*)
+  }
+
+  /**
+    * Find all Products by Price Range.
+    *
+    * @throws IllegalArgumentException if from greater than to
+    * @param connection implicit [[java.sql.Connection]]
+    * @return List of Products
+    */
+  def findByPriceRange(from: Int, to: Int)(implicit connection: Connection): List[Product] = {
+    assume(from <= to, "from cannot greater than to")
+    SQL(
+      s"""
+        SELECT code, name, description, color, size, picture_url, price, category_id FROM products WHERE price >= {from} AND price <= {to}
+      """)
+      .on('from -> from, 'to -> to)
+      .as(parser.*)
+  }
 
 
 }
