@@ -5,7 +5,7 @@ import java.sql.Connection
 
 import domains.Category
 import org.flywaydb.core.Flyway
-import org.scalatest.BeforeAndAfterAll
+import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll}
 import org.scalatest.Matchers._
 import org.scalatestplus.play.{OneAppPerTest, PlaySpec}
 import repositories.CategoryRepository
@@ -16,7 +16,7 @@ import repositories.CategoryRepository
   * @author Deny Prasetyo.
   */
 
-class CategoryRepositorySpec extends PlaySpec with OneAppPerTest with BeforeAndAfterAll {
+class CategoryRepositorySpec extends PlaySpec with OneAppPerTest with BeforeAndAfter {
   def withTransaction[T](block: Connection => T): T = {
     DatabaseConfig.withDatabase { db =>
       db.withTransaction(block)
@@ -26,7 +26,7 @@ class CategoryRepositorySpec extends PlaySpec with OneAppPerTest with BeforeAndA
   /**
     * Run Database Migration Before Test
     */
-  override def beforeAll(): Unit = {
+  before {
     DatabaseConfig.withDatabase { db =>
       val flyway = new Flyway
       flyway.setDataSource(db.dataSource)
@@ -37,7 +37,7 @@ class CategoryRepositorySpec extends PlaySpec with OneAppPerTest with BeforeAndA
   /**
     * Clean Database after test
     */
-  override def afterAll(): Unit = {
+  after {
     DatabaseConfig.withDatabase { db =>
       val flyway = new Flyway
       flyway.setDataSource(db.dataSource)
@@ -46,10 +46,10 @@ class CategoryRepositorySpec extends PlaySpec with OneAppPerTest with BeforeAndA
   }
 
 
-  "Category Repository" should {
+  "Category Repository Data Modification" should {
 
     val repository = new CategoryRepository
-    var categoryId: Int = 0
+    val categoryId: Int = 1
 
     "success insert" in {
       val insertResult = withTransaction { implicit connection =>
@@ -57,8 +57,7 @@ class CategoryRepositorySpec extends PlaySpec with OneAppPerTest with BeforeAndA
         repository.insert(category)
       }
       insertResult.isDefined shouldBe true
-      categoryId = insertResult.get.toInt
-      categoryId shouldNot be(0)
+      insertResult.get shouldNot be(0)
     }
 
     var categoryFromDb: Category = null
@@ -68,7 +67,7 @@ class CategoryRepositorySpec extends PlaySpec with OneAppPerTest with BeforeAndA
         repository.findOne(categoryId).get
       }
 
-      categoryFromDb.name shouldEqual "Electronics"
+      categoryFromDb.name shouldEqual "Pakaian Wanita"
     }
 
     "success update" in {
@@ -87,18 +86,73 @@ class CategoryRepositorySpec extends PlaySpec with OneAppPerTest with BeforeAndA
     }
 
     "success delete" in {
+      val deletedId = 81
       val deleteResult = withTransaction { implicit c =>
-        repository.delete(categoryId)
+        repository.delete(deletedId)
       }
 
       deleteResult mustEqual 1
 
       val deletedCategory = withTransaction { implicit c =>
-        repository.findOne(categoryId)
+        repository.findOne(deletedId)
       }
 
       deletedCategory.isDefined shouldBe false
     }
+  }
+
+  "Category Repository Queries" should {
+    val repository = new CategoryRepository
+
+    "produce correct data when findAll()" in {
+      val categoryList = withTransaction { implicit c =>
+        repository.findAll()
+      }
+
+      categoryList.size should be(84)
+    }
+
+    "produce correct data when findOne" in {
+      val findExist = withTransaction { implicit c =>
+        repository.findOne(1)
+      }
+
+      findExist.isDefined shouldBe true
+
+      val findNone = withTransaction { implicit c =>
+        repository.findOne(999)
+      }
+
+      findNone.isDefined shouldBe false
+    }
+
+    "produce correct data when findChildren" in {
+      val children = withTransaction { implicit c =>
+        repository.findChildren(1)
+      }
+
+      children.size should be(5)
+      children.map(_.id) should contain only(4, 5, 6, 7, 8)
+    }
+
+    "produce correct data when findByName" in {
+      val categoriesByName = withTransaction { implicit c =>
+        repository.findByName("Pakaian")
+      }
+
+      categoriesByName.size should be(6)
+      categoriesByName.map(_.id) should contain only(1, 2, 7, 8, 37, 44)
+    }
+
+    "product correct data when listAsFlat" in {
+      val categoryFlatList = withTransaction { implicit c =>
+        repository.listAsFlat()
+      }
+      categoryFlatList.size should be(67)
+      categoryFlatList.map(_.rootId) should contain only(1, 2, 3)
+
+    }
+
   }
 
 }
