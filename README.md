@@ -38,7 +38,7 @@ Please check `conf/routes` for available services.
 - `deploy-prod.sh` build docker image and run in production mode
 
 ## Deploy on Digital Ocean using Docker Machine
-- Create machine with []Digital Ocean driver](https://docs.docker.com/machine/drivers/digital-ocean/)
+- Create machine with [Digital Ocean driver](https://docs.docker.com/machine/drivers/digital-ocean/)
 ```
 docker-machine create \
 	--driver digitalocean \
