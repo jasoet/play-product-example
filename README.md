@@ -36,3 +36,18 @@ Please check `conf/routes` for available services.
 - Every Script need to run inside `/deployment`
 - `build-install.sh` build and copy docker image to `/deployment/app`
 - `deploy-prod.sh` build docker image and run in production mode
+
+## Deploy on Digital Ocean using Docker Machine
+- Create machine with []Digital Ocean driver](https://docs.docker.com/machine/drivers/digital-ocean/)
+```
+docker-machine create \
+	--driver digitalocean \
+	--digitalocean-access-token=<Do Access Token> \
+	--digitalocean-region=sgp1 \
+	--digitalocean-size=1gb \
+	--digitalocean-ssh-key-fingerprint=<DO SSH Key Fingerprint> \
+	do-docker
+```
+- Check if machine is created `docker-machine ls`
+- Connect local Docker Client to Docker Machine `eval $(docker-machine env do-docker)`
+- Deploy Application
