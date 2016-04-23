@@ -8,7 +8,6 @@ scalaVersion := "2.11.8"
 
 maintainer := "Deny Prasetyo"
 dockerRepository := Some("jasoet")
-dockerBaseImage := "anapsix/alpine-java:latest"
 dockerUpdateLatest := true
 daemonUser in Docker := "root"
 
