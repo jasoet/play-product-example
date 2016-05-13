@@ -1,18 +1,23 @@
-db:
-    build: postgres/
-    ports:
-        - "15432:5432"
-    environment:
-        - POSTGRES_USER=root
-        - POSTGRES_PASSWORD=localhost
-app:
-    build: app/
-    ports:
-        - "80:9000"
-    links:
-        - db
-    environment:
-        - APPLICATION_SECRET=92827ajdflajsdjf2j3283y8232j3k2jl32232ascsada
-        - PLAY_PRODUCT_DB_URL=jdbc:postgresql://db:5432/product
-        - PLAY_PRODUCT_DB_USERNAME=root
-        - PLAY_PRODUCT_DB_PASSWORD=localhost
+version: "2"
+services:
+  db:
+      build: postgres/
+      image: jasoet/play_product_db
+      ports:
+          - "15432:5432"
+      environment:
+          - POSTGRES_USER=root
+          - POSTGRES_PASSWORD=localhost
+
+  app:
+      build: app/
+      image: jasoet/play_product_app
+      ports:
+          - "80:9000"
+      links:
+          - db
+      environment:
+          - APPLICATION_SECRET=92827ajdflajsdjf2j3283y8232j3k2jl32232ascsada
+          - PLAY_PRODUCT_DB_URL=jdbc:postgresql://db:5432/product
+          - PLAY_PRODUCT_DB_USERNAME=root
+          - PLAY_PRODUCT_DB_PASSWORD=localhost
