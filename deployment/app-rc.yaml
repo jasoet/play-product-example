@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    component: play-product
+  name: play-product-controller
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: application
+        component: play-product
+    spec:
+      containers:
+      - image: jasoet/play_product_app
+        name: play-product-app
+        ports:
+        - containerPort: 9000
+        resources:
+          limits:
+            cpu: 1000m
+        env:
+          - name: "APPLICATION_SECRET"
+            value: "lasldfjas8978akdnflajsdlfjasdo982qlasddfas"
+          - name: "PLAY_PRODUCT_DB_URL"
+            value: "jdbc:postgresql://postgresql-service.default.svc.cluster.local:5432/product"
+          - name: "PLAY_PRODUCT_DB_USERNAME"
+            value: "root"
+          - name: "PLAY_PRODUCT_DB_PASSWORD"
+            value: "localhost"

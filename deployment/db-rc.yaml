@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    component: postgresql
+  name: postgresql-controller
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: database
+        component: postgresql
+    spec:
+      containers:
+      - image: jasoet/play_product_db
+        name: play-product-db
+        ports:
+        - containerPort: 5432
+        resources:
+          limits:
+            cpu: 500m
+        env:
+          - name: "POSTGRES_USER"
+            value: "root"
+          - name: "POSTGRES_PASSWORD"
+            value: "localhost"

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    component: play-product
+  name: play-product-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 9000
+  selector:
+    app: application
+    component: play-product
